@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Registro de Aluguel · Black System</title>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  }
+
+  /* ===== ANIMAÇÃO DE FUNDO (gradiente dinâmico preto profundo) ===== */
+  body {
+    background: radial-gradient(circle at 20% 30%, #000000, #030303);
+    color: #e8e8e8;
+    padding: 24px 16px 48px 16px;
+    min-height: 100vh;
+    position: relative;
+    animation: bgPulse 18s ease infinite alternate;
+  }
+
+  /* camada de animação extra - movimentação sutil do fundo */
+  @keyframes bgPulse {
+    0% {
+      background: radial-gradient(circle at 20% 30%, #000000, #0a0a0a);
+    }
+    50% {
+      background: radial-gradient(circle at 80% 70%, #0a0a0a, #000000);
+    }
+    100% {
+      background: radial-gradient(circle at 40% 60%, #000000, #050505);
+    }
+  }
+
+  /* Efeito de ruído/textura opcional (muito sutil) para profundidade */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 6px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* CARDS totalmente black com brilho nas bordas (hover) */
+  .card {
+    background: #000000;      /* preto absoluto */
+    border: 1px solid #1f1f1f;
+    border-radius: 32px;
+    padding: 24px 20px;
+    margin-bottom: 28px;
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.02);
+    transition: border-color 0.25s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    border-color: #2c2c2c;
+    box-shadow: 0 22px 38px -14px #000000;
+  }
+
+  /* topo */
+  .topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .topo h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #f0f0f0, #adadad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 2px rgba(255,255,255,0.1);
+  }
+
+  .meta {
+    background: #0a0a0a;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #b0b0b0;
+    border: 1px solid #262626;
+    backdrop-filter: blur(2px);
+  }
+
+  /* boxes de total e quantidade */
+  .boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 8px;
+  }
+
+  .box {
+    background: #040404;
+    border: 1px solid #232323;
+    border-radius: 28px;
+    padding: 20px 12px;
+    text-align: center;
+    transition: transform 0.2s ease, border-color 0.2s;
+  }
+
+  .box:hover {
+    border-color: #3a3a3a;
+    transform: translateY(-2px);
+  }
+
+  .box h2 {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #ffffff, #c0c0c0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 6px;
+  }
+
+  .box p {
+    color: #888;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* campos input e botões com animações e hover premium */
+  input {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 44px;
+    border: 1px solid #262626;
+    background: #030303;
+    color: #f0f0f0;
+    font-size: 16px;
+    margin-top: 24px;
+    transition: all 0.25s ease;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: #5e5e5e;
+    background: #080808;
+    box-shadow: 0 0 0 2px rgba(80,80,80,0.3);
+  }
+
+  /* ANIMAÇÃO NOS BOTÕES */
+  button {
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 44px;
+    background: #121212;
+    color: #ececec;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 16px;
+    cursor: pointer;
+    border: 1px solid #2c2c2c;
+    transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.3px;
+  }
+
+  /* efeito de brilho ao passar mouse */
+  button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transition: left 0.5s ease;
+  }
+
+  button:hover::before {
+    left: 100%;
+  }
+
+  button:hover {
+    background: #1c1c1c;
+    border-color: #4a4a4a;
+    transform: scale(1.01);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02);
+  }
+
+  button:active {
+    transform: scale(0.98);
+    transition: 0.05s;
+  }
+
+  .reset {
+    background: #0a0a0a;
+    border: 1px solid #3a2a2a;
+    color: #ffaeae;
+  }
+
+  .reset:hover {
+    background: #1d1111;
+    border-color: #bb5e5e;
+    color: #ffd0d0;
+    box-shadow: 0 0 10px rgba(180, 60, 60, 0.2);
+  }
+
+  /* info hoje */
+  .info {
+    display: flex;
+    justify-content: space-between;
+    background: #030303;
+    padding: 14px 18px;
+    border-radius: 40px;
+    margin-top: 24px;
+    color: #aaa;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #202020;
+    backdrop-filter: blur(2px);
+  }
+
+  /* tabela escura refinada */
+  table {
+    width: 100%;
+    margin-top: 22px;
+    border-collapse: collapse;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  th {
+    background: #0a0a0a;
+    padding: 14px 8px;
+    color: #cdcdcd;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #262626;
+  }
+
+  td {
+    padding: 14px 8px;
+    border-bottom: 1px solid #181818;
+    text-align: center;
+    font-size: 14px;
+    background-color: #010101;
+    transition: background 0.15s;
+  }
+
+  tr:hover td {
+    background-color: #0c0c0c;
+  }
+
+  .valor {
+    color: #a3ffb5;
+    font-weight: 700;
+    text-shadow: 0 0 2px #1f5f2e;
+  }
+
+  .data {
+    color: #ffbc7a;
+    text-align: center;
+    background: #0c0c0c;
+    padding: 12px;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #252525;
+  }
+
+  /* ===== RODAPÉ COM NOME GRADIENTE ===== */
+  .footer-brand {
+    text-align: center;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    padding: 16px 12px 8px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .gradient-name {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #9c9c9c, #e2e2e2, #7e7e7e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+    animation: subtleGlow 3s ease infinite alternate;
+    display: inline-block;
+    padding: 0 10px;
+  }
+
+  @keyframes subtleGlow {
+    0% {
+      opacity: 0.7;
+      filter: blur(0px);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0.3px);
+      text-shadow: 0 0 3px rgba(255,255,170,0.2);
+    }
+  }
+
+  .footer-brand .sub {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    margin-top: 6px;
+    background: linear-gradient(120deg, #555, #2c2c2c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 400;
+  }
+
+  /* responsivo */
+  @media (max-width: 480px) {
+    .container {
+      max-width: 100%;
+    }
+    .box h2 {
+      font-size: 32px;
+    }
+    .topo h1 {
+      font-size: 26px;
+    }
+    button {
+      font-size: 17px;
+      padding: 14px 18px;
+    }
+    .gradient-name {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* scroll custom */
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #030303;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2b2b2b;
+    border-radius: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="topo">
+            <h1>⚫ ALUGUEL</h1>
+            <div class="meta">R$33,00 por aluguel</div>
+        </div>
+
+        <div class="boxes">
+            <div class="box">
+                <h2 id="total">R$ 0</h2>
+                <p>Total recebido</p>
+            </div>
+            <div class="box">
+                <h2 id="quantidade">0</h2>
+                <p>Total de aluguéis</p>
+            </div>
+        </div>
+
+        <input type="text" id="cliente" placeholder="Nome do cliente (ex: Ana, João)" autocomplete="off">
+
+        <button onclick="registrar()">
+            💰 REGISTRAR + R$33
+        </button>
+
+        <button class="reset" onclick="resetar()">
+            🔄 RESETAR TUDO
+        </button>
+
+        <div class="info">
+            <span>📅 Hoje (registros)</span>
+            <span id="hoje">0 registros</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Data/Hora</th><th>Cliente</th><th>Valor</th></tr>
+                </thead>
+                <tbody id="tabela"></tbody>
+            </table>
+        </div>
+
+        <div class="data">
+            🖤 sistema black • animações sutis
+        </div>
+    </div>
+
+    <!-- NOME NO FUNDO EM BAIXO COM GRADIENTE -->
+    <div class="footer-brand">
+        <span class="gradient-name">✦ ALUGUEL SYSTEM ✦</span>
+        <span class="sub">BLACK EDITION · REGISTRO TOTAL</span>
+    </div>
+</div>
+
+<script>
+    // ---- ESTADO PADRÃO ----
+    let total = 0;
+    let quantidade = 0;
+
+    // Referências DOM
+    const totalEl = document.getElementById("total");
+    const quantidadeEl = document.getElementById("quantidade");
+    const hojeEl = document.getElementById("hoje");
+    const tabelaBody = document.getElementById("tabela");
+    const clienteInput = document.getElementById("cliente");
+
+    // Carregar dados salvos no localStorage
+    function carregarStorage() {
+        const savedTotal = localStorage.getItem("aluguel_total");
+        const savedQtd = localStorage.getItem("aluguel_qtd");
+        const savedRows = localStorage.getItem("aluguel_rows");
+        
+        if(savedTotal !== null && savedQtd !== null) {
+            total = parseFloat(savedTotal);
+            quantidade = parseInt(savedQtd);
+            totalEl.innerHTML = `R$ ${total}`;
+            quantidadeEl.innerHTML = quantidade;
+            hojeEl.innerHTML = quantidade + (quantidade === 1 ? " registro" : " registros");
+        }
+        
+        if(savedRows && savedRows.length > 0) {
+            tabelaBody.innerHTML = savedRows;
+        } else if(quantidade === 0) {
+            tabelaBody.innerHTML = "";
+        }
+    }
+    
+    function salvarStorage() {
+        localStorage.setItem("aluguel_total", total);
+        localStorage.setItem("aluguel_qtd", quantidade);
+        localStorage.setItem("aluguel_rows", tabelaBody.innerHTML);
+    }
+    
+    // Registrar novo aluguel
+    function registrar() {
+        let cliente = clienteInput.value.trim();
+        
+        if(cliente === "") {
+            alert("❗ Digite o nome do cliente para registrar o aluguel.");
+            clienteInput.style.borderColor = "#aa5555";
+            setTimeout(() => { clienteInput.style.borderColor = "#262626"; }, 500);
+            return;
+        }
+        
+        quantidade++;
+        total += 33;
+        
+        totalEl.innerHTML = `R$ ${total}`;
+        quantidadeEl.innerHTML = quantidade;
+        hojeEl.innerHTML = quantidade + (quantidade === 1 ? " registro" : " registros");
+        
+        const agora = new Date();
+        const dataFormatada = agora.toLocaleDateString('pt-BR') + " " + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute:'2-digit' });
+        
+        const novaLinha = document.createElement('tr');
+        novaLinha.innerHTML = `
+            <td style="font-weight: 500;">${quantidade}</td>
+            <td style="font-size: 12px; letter-spacing: 0.2px;">${dataFormatada}</td>
+            <td style="font-weight: 500;">${escapeHtml(cliente)}</td>
+            <td class="valor">R$ 33</td>
+        `;
+        
+        if(tabelaBody.firstChild) {
+            tabelaBody.insertBefore(novaLinha, tabelaBody.firstChild);
+        } else {
+            tabelaBody.appendChild(novaLinha);
+        }
+        
+        clienteInput.value = "";
+        clienteInput.focus();
+        
+        salvarStorage();
+        
+        // feedback visual no botão
+        const btn = document.querySelector('button[onclick="registrar()"]');
+        if(btn) {
+            btn.style.transform = "scale(0.97)";
+            setTimeout(() => { if(btn) btn.style.transform = ""; }, 120);
+        }
+    }
+    
+    // Resetar todos os dados
+    function resetar() {
+        if(confirm("⚠️ ATENÇÃO: Isso irá apagar TODOS os registros de aluguéis. Tem certeza?")) {
+            total = 0;
+            quantidade = 0;
+            
+            totalEl.innerHTML = "R$ 0";
+            quantidadeEl.innerHTML = "0";
+            hojeEl.innerHTML = "0 registros";
+            tabelaBody.innerHTML = "";
+            
+            localStorage.removeItem("aluguel_total");
+            localStorage.removeItem("aluguel_qtd");
+            localStorage.removeItem("aluguel_rows");
+            
+            clienteInput.value = "";
+            clienteInput.focus();
+            
+            const resetBtn = document.querySelector('.reset');
+            if(resetBtn) {
+                resetBtn.style.transform = "scale(0.96)";
+                setTimeout(() => { if(resetBtn) resetBtn.style.transform = ""; }, 150);
+            }
+        }
+    }
+    
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    clienteInput.addEventListener("keypress", function(e) {
+        if(e.key === "Enter") {
+            e.preventDefault();
+            registrar();
+        }
+    });
+    
+    carregarStorage();
+    
+    if(quantidade === 0 && tabelaBody.children.length === 0) {
+        // ok
+    } else if(quantidade > 0 && tabelaBody.children.length === 0) {
+        total = 0;
+        quantidade = 0;
+        totalEl.innerHTML = "R$ 0";
+        quantidadeEl.innerHTML = "0";
+        hojeEl.innerHTML = "0 registros";
+        localStorage.removeItem("aluguel_total");
+        localStorage.removeItem("aluguel_qtd");
+        localStorage.removeItem("aluguel_rows");
+    }
+    
+    // animação suave
+    document.querySelector('.container').style.animation = 'fadeSlide 0.5s ease';
+    const styleAnim = document.createElement('style');
+    styleAnim.textContent = `
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(styleAnim);
+</script>
+
+</body>
+</html>
